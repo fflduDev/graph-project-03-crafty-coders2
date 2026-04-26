@@ -4,9 +4,9 @@ package graph_template;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+//test
 //simplest possible adjacency list implementation of the node
-
+//krvjnejbvibevujreiujebniuebijebviervbiewjveijvb
 public class GraphNode {
 	private String value;
 	private HashMap<GraphNode, Integer> paths = new HashMap<>();

@@ -4,7 +4,7 @@ package graph_template;
 public class SuperDuperGraphTester {
 	private static DiGraph graph;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) {//test3737373737373
 		
 		
 		//EX1
