@@ -3,7 +3,7 @@ package graph_template;
 
 import java.util.ArrayList;
 import java.util.List;
- 
+import java.util.HashMap
 
 public class ListBasedDiGraph implements DiGraph {
 	private List<GraphNode> nodeList = new ArrayList<>();
@@ -78,17 +78,66 @@ public class ListBasedDiGraph implements DiGraph {
 		return null;
 	}
 
-	@Override
-	public Boolean nodeIsReachable(GraphNode fromNode, GraphNode toNode) {
+		@Override
+	public Boolean nodeIsReachable(GraphNode fromNode, GraphNode toNode) {//dan 
 		// TODO Auto-generated method stub
-		return null;
+		GraphNode start = getNode(fromNode.getValue()); 
+		GraphNode target = getNode(toNode.getValue()); 
+
+		List<GraphNode> visited = new ArrayList<>(); 
+		List<GraphNode> queue = new ArrayList<>(); 
+
+		queue.add(start); 
+		visited.add(start); 
+
+		while (!queue.isEmpty()) { 
+			GraphNode current = queue.remove(0); 
+
+			if (current.getValue().equals(target.getValue())) { 
+				return true; 
+			}
+
+			for (GraphNode neighbor : current.getNeighbors()) { 
+				if (!visited.contains(neighbor)) { 
+					visited.add(neighbor); 
+					queue.add(neighbor); 
+				}
+			}
+		}
+
+		return false; 
 	}
 
+
 	@Override
-	public Boolean hasCycles() {
+	public Boolean hasCycles() {//daN
 		// TODO Auto-generated method stub
-		return null;
+		List<GraphNode> visited = new ArrayList<>(); 
+		List<GraphNode> stack = new ArrayList<>(); 
+
+		for (GraphNode node : nodeList) { 
+			if (dfsCycle(node, visited, stack)) { 
+				return true; 
+			}
+		}
+		return false; 
 	}
+
+	private Boolean dfsCycle(GraphNode node, List<GraphNode> visited, List<GraphNode> stack) { 
+		if (stack.contains(node)) return true; 
+		if (visited.contains(node)) return false; 
+
+		visited.add(node); 
+		stack.add(node); 
+
+		for (GraphNode neighbor : node.getNeighbors()) {
+			if (dfsCycle(neighbor, visited, stack)) return true; 
+		}
+
+		stack.remove(node); 
+		return false; 
+	}
+
 
 	@Override
 	public List<GraphNode> getNodes() {
@@ -106,9 +155,28 @@ public class ListBasedDiGraph implements DiGraph {
 	}
 
 	@Override
-	public int fewestHops(GraphNode fromNode, GraphNode toNode) {
+	public int fewestHops(GraphNode fromNode, GraphNode toNode) {//dan
 		// TODO Auto-generated method stub
-		return 0;
+		GraphNode start = getNode(fromNode.getValue()); 
+		GraphNode target = getNode(toNode.getValue()); 
+
+		List<GraphNode> queue = new ArrayList<>(); 
+		HashMap<GraphNode, Integer> distance = new HashMap<>(); 
+
+		queue.add(start); 
+		distance.put(start, 0); 
+
+		while (!queue.isEmpty()) { 
+			GraphNode current = queue.remove(0); 
+
+			if (current.getValue().equals(target.getValue())) { 
+				return distance.get(current);}
+
+			for (GraphNode neighbor : current.getNeighbors()) { 
+				if (!distance.containsKey(neighbor)) { 
+					distance.put(neighbor, distance.get(current) + 1); 
+					queue.add(neighbor); }}}
+		return -1;
 	}
 
 	@Override
