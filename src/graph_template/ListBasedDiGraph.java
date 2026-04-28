@@ -43,8 +43,11 @@ public class ListBasedDiGraph implements DiGraph {
 
 	@Override
 	public String getNodeValue(GraphNode node) {
+		if (!nodeList.contains(node)) {
+			return null;
+		}
 		// TODO Auto-generated method stub
-		return null;
+		return node.getValue();
 	}
 
 	@Override
@@ -64,32 +67,56 @@ public class ListBasedDiGraph implements DiGraph {
 
 	@Override
 	public Boolean removeEdge(GraphNode fromNode, GraphNode toNode) {
+		if (!nodeList.contains(fromNode) || !nodeList.contains(toNode)) {
+			return false;
+		}
 		// TODO Auto-generated method stub
-		return null;
+		return fromNode.removeNeighbor(toNode);
 	}
 
 	@Override
 	public Boolean setEdgeValue(GraphNode fromNode, GraphNode toNode, Integer newWeight) {
+		if (!nodeList.contains(fromNode) || !nodeList.contains(toNode)) {
+			return false;
+		}
 		// TODO Auto-generated method stub
-		return null;
+		if (fromNode.getDistanceToNeighbor(toNode) == null) {
+			return false;
+		}
+		fromNode.removeNeighbor(toNode);
+		return fromNode.addNeighbor(toNode, newWeight);
 	}
 
 	@Override
 	public Integer getEdgeValue(GraphNode fromNode, GraphNode toNode) {
+		if (!nodeList.contains(fromNode) || !nodeList.contains(toNode)) {
+			return null;
+		}
 		// TODO Auto-generated method stub
-		return null;
+		return fromNode.getDistanceToNeighbor(toNode);
 	}
 
 	@Override
 	public List<GraphNode> getAdjacentNodes(GraphNode node) {
+		if (!nodeList.contains(node)) {
+			return null;
+		}
 		// TODO Auto-generated method stub
-		return null;
+		return node.getNeighbors();
 	}
 
 	@Override
 	public Boolean nodesAreAdjacent(GraphNode fromNode, GraphNode toNode) {
+		if (!nodeList.contains(fromNode) || !nodeList.contains(toNode)) {
+			return false;
+		}
+		for (GraphNode neighbor : fromNode.getNeighbors()) {
+			if (neighbor.getValue().equals(toNode.getValue())) {
+				return true;
+			}
+		}
 		// TODO Auto-generated method stub
-		return null;
+		return false;
 	}
 
 		@Override
@@ -195,6 +222,10 @@ public class ListBasedDiGraph implements DiGraph {
 
 	@Override
 	public int shortestPath(GraphNode fromNode, GraphNode toNode) {
+		GraphNode start = getNode(fromNode.getValue());
+		GraphNode target = getNode(toNode.getValue());
+		
+		
 		// TODO Auto-generated method stub
 		return 0;
 	}
