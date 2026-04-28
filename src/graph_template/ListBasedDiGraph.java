@@ -3,7 +3,7 @@ package graph_template;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap
+import java.util.HashMap;
 
 public class ListBasedDiGraph implements DiGraph {
 	private List<GraphNode> nodeList = new ArrayList<>();
@@ -17,14 +17,28 @@ public class ListBasedDiGraph implements DiGraph {
 
 	@Override
 	public Boolean removeNode(GraphNode node) {
+		if (!nodeList.contains(node)) {
+			return false;
+		}
+		//List<GraphNode> neighbors = node.getNeighbors();
+		for (GraphNode current : nodeList) {
+			current.removeNeighbor(node);
+		}
+		
+		nodeList.remove(node);
+		
 		// TODO Auto-generated method stub
-		return null;
+		return true;
 	}
 
 	@Override
 	public Boolean setNodeValue(GraphNode node, String newNodeValue) {
+		if (!nodeList.contains(node)) {
+			return false;
+		}
+		node.setValue(newNodeValue);
 		// TODO Auto-generated method stub
-		return null;
+		return true;
 	}
 
 	@Override
