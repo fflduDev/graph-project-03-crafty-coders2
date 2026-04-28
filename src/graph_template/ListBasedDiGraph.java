@@ -200,7 +200,11 @@ public class ListBasedDiGraph implements DiGraph {
 		// TODO Auto-generated method stub
 		GraphNode start = getNode(fromNode.getValue()); 
 		GraphNode target = getNode(toNode.getValue()); 
-
+		
+		if (start == null || target == null) {
+			return -1;
+		}
+		
 		List<GraphNode> queue = new ArrayList<>(); 
 		HashMap<GraphNode, Integer> distance = new HashMap<>(); 
 
