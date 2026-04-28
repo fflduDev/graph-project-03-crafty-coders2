@@ -3,7 +3,13 @@ package graph_template;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Stack;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 public class ListBasedDiGraph implements DiGraph {
 	private List<GraphNode> nodeList = new ArrayList<>();
@@ -17,15 +23,16 @@ public class ListBasedDiGraph implements DiGraph {
 
 	@Override
 	public Boolean removeNode(GraphNode node) {
-		if (!nodeList.contains(node)) {
+		GraphNode start = getNode(node.getValue()); 
+		if (start == null) {
 			return false;
 		}
 		//List<GraphNode> neighbors = node.getNeighbors();
 		for (GraphNode current : nodeList) {
-			current.removeNeighbor(node);
+			current.removeNeighbor(start);
 		}
 		
-		nodeList.remove(node);
+		nodeList.remove(start);
 		
 		// TODO Auto-generated method stub
 		return true;
@@ -33,85 +40,98 @@ public class ListBasedDiGraph implements DiGraph {
 
 	@Override
 	public Boolean setNodeValue(GraphNode node, String newNodeValue) {
-		if (!nodeList.contains(node)) {
+		GraphNode start = getNode(node.getValue()); 
+		if (start == null) {
 			return false;
 		}
-		node.setValue(newNodeValue);
+		start.setValue(newNodeValue);
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public String getNodeValue(GraphNode node) {
-		if (!nodeList.contains(node)) {
+		GraphNode start = getNode(node.getValue()); 
+		if (start == null) {
 			return null;
 		}
 		// TODO Auto-generated method stub
-		return node.getValue();
+		return start.getValue();
 	}
 
 	@Override
 	public Boolean addEdge(GraphNode fromNode, GraphNode toNode, Integer weight) {
 
 		//BAD
-		fromNode.addNeighbor(toNode, weight);
+		//fromNode.addNeighbor(toNode, weight);
 		
 		//GOOD
 		GraphNode targetFromNode = getNode(fromNode.getValue());
 		GraphNode targetToNode = getNode(toNode.getValue());
-	 	 
-		targetFromNode.addNeighbor(targetToNode, weight);
+	 	
+		if (targetFromNode == null || targetToNode == null) {
+			return false;
+		}
 	
-		return true;
+		return targetFromNode.addNeighbor(targetToNode, weight);
 	}
 
 	@Override
 	public Boolean removeEdge(GraphNode fromNode, GraphNode toNode) {
-		if (!nodeList.contains(fromNode) || !nodeList.contains(toNode)) {
+		GraphNode start = getNode(fromNode.getValue()); 
+		GraphNode target = getNode(toNode.getValue()); 
+		if (start == null || target == null) {
 			return false;
 		}
 		// TODO Auto-generated method stub
-		return fromNode.removeNeighbor(toNode);
+		return start.removeNeighbor(target);
 	}
 
 	@Override
 	public Boolean setEdgeValue(GraphNode fromNode, GraphNode toNode, Integer newWeight) {
-		if (!nodeList.contains(fromNode) || !nodeList.contains(toNode)) {
+		GraphNode start = getNode(fromNode.getValue()); 
+		GraphNode target = getNode(toNode.getValue()); 
+		if (start == null || target == null) {
 			return false;
 		}
 		// TODO Auto-generated method stub
-		if (fromNode.getDistanceToNeighbor(toNode) == null) {
+		if (start.getDistanceToNeighbor(target) == null) {
 			return false;
 		}
-		fromNode.removeNeighbor(toNode);
-		return fromNode.addNeighbor(toNode, newWeight);
+		start.removeNeighbor(target);
+		return start.addNeighbor(target, newWeight);
 	}
 
 	@Override
 	public Integer getEdgeValue(GraphNode fromNode, GraphNode toNode) {
-		if (!nodeList.contains(fromNode) || !nodeList.contains(toNode)) {
+		GraphNode start = getNode(fromNode.getValue()); 
+		GraphNode target = getNode(toNode.getValue()); 
+		if (start == null || target == null) {
 			return null;
 		}
 		// TODO Auto-generated method stub
-		return fromNode.getDistanceToNeighbor(toNode);
+		return start.getDistanceToNeighbor(target);
 	}
 
 	@Override
 	public List<GraphNode> getAdjacentNodes(GraphNode node) {
-		if (!nodeList.contains(node)) {
+		GraphNode start = getNode(node.getValue()); 
+		if (start == null) {
 			return null;
 		}
 		// TODO Auto-generated method stub
-		return node.getNeighbors();
+		return start.getNeighbors();
 	}
 
 	@Override
 	public Boolean nodesAreAdjacent(GraphNode fromNode, GraphNode toNode) {
-		if (!nodeList.contains(fromNode) || !nodeList.contains(toNode)) {
+		GraphNode start = getNode(fromNode.getValue()); 
+		GraphNode target = getNode(toNode.getValue()); 
+		if (start == null || target == null) {
 			return false;
 		}
-		for (GraphNode neighbor : fromNode.getNeighbors()) {
-			if (neighbor.getValue().equals(toNode.getValue())) {
+		for (GraphNode neighbor : start.getNeighbors()) {
+			if (neighbor.getValue().equals(target.getValue())) {
 				return true;
 			}
 		}
@@ -124,6 +144,10 @@ public class ListBasedDiGraph implements DiGraph {
 		// TODO Auto-generated method stub
 		GraphNode start = getNode(fromNode.getValue()); 
 		GraphNode target = getNode(toNode.getValue()); 
+		
+		if (start == null || target == null) {
+			return false;
+		}
 
 		List<GraphNode> visited = new ArrayList<>(); 
 		List<GraphNode> queue = new ArrayList<>(); 
@@ -229,9 +253,52 @@ public class ListBasedDiGraph implements DiGraph {
 		GraphNode start = getNode(fromNode.getValue());
 		GraphNode target = getNode(toNode.getValue());
 		
+		if (start == null || target == null) {
+			return -1;
+		}
 		
+		List<GraphNode> visited = new ArrayList<>();
+		Map<GraphNode, Integer> distance = new HashMap<>();
+		
+		for (GraphNode neighbors : nodeList) {
+			distance.put(neighbors, Integer.MAX_VALUE);
+			visited.add(neighbors);	
+		}
+		
+		distance.put(start, 0);
+		
+		
+		while (!visited.isEmpty()) {
+			GraphNode current = null;
+			
+			for (GraphNode neighbor : visited) {
+				if (current == null || distance.get(neighbor) < distance.get(current)) {
+					current = neighbor;
+				}
+			}
+			
+			if (current.getValue().equals(target.getValue())) {
+				return distance.get(current);
+			}
+			
+			visited.remove(current);
+			
+			if (distance.get(current) == Integer.MAX_VALUE) {
+				break;
+			}
+			
+			for (GraphNode neighbor : current.getNeighbors()) {
+				int dist = distance.get(current) + current.getDistanceToNeighbor(neighbor);
+				
+				if (dist < distance.get(neighbor)) {
+					distance.put(neighbor, dist);
+				}
+				
+			}
+			
+		}
 		// TODO Auto-generated method stub
-		return 0;
+		return -1;
 	}
 
  
